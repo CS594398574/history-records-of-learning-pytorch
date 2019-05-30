@@ -13,4 +13,4 @@ Learning PyTorch with Examples        张量、利用numpy搭建网络与利用p
 
 模型保存和模型存储                      说明了pytorch对数据模型如何进行存储的细节
  
-目标检测Mask R-CNN             <\t>        利用Mask R-CNN对行人检测数据集检测和分割处理
+目标检测Mask R-CNN             <br>        利用Mask R-CNN对行人检测数据集检测和分割处理
