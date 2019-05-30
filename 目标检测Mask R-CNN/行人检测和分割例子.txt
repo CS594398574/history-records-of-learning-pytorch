@@ -1,0 +1,21 @@
+配置环境：
+torchvision 0.3 
+pycocotools
+
+#install torchvision 0.3 
+pip3 install torch torchvision
+或者conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
+
+# Install pycocotools
+git clone https://github.com/cocodataset/cocoapi.git
+cd cocoapi/PythonAPI
+python setup.py build_ext install
+
+行人数据集
+https://www.cis.upenn.edu/~jshi/ped_html/PennFudanPed.zip
+
+需要一些工具包文件解压放入到虚拟环境下site-packages包中
+https://github.com/pytorch/vision/references/detection/.....
+将detection文件下的文件放入到site-packages中。
+
+
