@@ -1,0 +1,63 @@
+import torch
+from torch.autograd import Variable
+from torchvision import transforms
+import os
+import shutil
+from PIL import Image
+from torchvision import datasets, models, transforms
+import torch.nn as nn
+
+def get_img(image_path):
+    img_list = []
+    for i in os.listdir(image_path):
+        img_list.append(image_path+"/"+i)
+    return img_list
+
+def load_models():
+    model = models.resnet18(pretrained=True)
+    num_ftrs = model.fc.in_features
+    model= nn.Linear(num_ftrs, 2)
+    # model_ft = model_ft.to(device)
+    model = torch.load('/home/jlh/PycharmProjects/ClassfierPro/net_parameter.pkl')
+    model.eval()
+    return model
+
+def predict_image(image_path):
+    image = Image.open(image_path)
+
+    transformation = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    image_tensor = transformation(image).float() # 预处理图像
+    image_tensor = image_tensor.unsqueeze_(0)    # 额外添加一个批次维度，因为PyTorch将所有的图像当做批次
+
+    if torch.cuda.is_available():
+        image_tensor.cuda()
+
+    model = load_models()
+
+    input = Variable(image_tensor.cuda())   # 将输入变为变量
+    output = model(input)                   # 预测图像的类
+    index = output.data.cpu().numpy().argmax()
+    return index
+
+if __name__ == '__main__':
+    image_path = r'/home/jlh/test/'
+    img_list = get_img(image_path)
+    target_Path0='/home/jlh/result/noapparatus'
+    target_path1='/home/jlh/result/withapparatus/'
+    for i in img_list:
+        index = predict_image(i)
+        id2tag = {0:'NoApparatus',1: 'WithApparatus'}
+        # print(index)
+        print("img:",i,"  ",id2tag[index])
+        if id2tag[index]=="WithApparatus":
+            if not os.path.exists(target_path1):
+                os.makedirs(target_path1)
+            shutil.copy(i, target_path1)
+        else:
+            if not os.path.exists(target_Path0):
+                os.makedirs(target_Path0)
+            shutil.copy(i,target_Path0)
